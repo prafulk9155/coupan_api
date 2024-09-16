@@ -9,6 +9,7 @@ const userRoutes = require('./routes/userRoutes');
 const couponRoutes = require('./routes/couponRoutes');
 const { authenticate } = require('./middlewares/authMiddleware'); // Import authentication middleware
 const { errorHandler } = require('./middlewares/errorMiddleware'); // Import error handling middleware
+const productRoutes = require('./routes/productRoutes')
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ connectDB();
 // Define Routes
 app.use('/api/users', userRoutes);
 app.use('/api/coupons', authenticate, couponRoutes); // Apply authentication to coupon routes
+app.use('/api/products', productRoutes);
 
 // Error handling middleware should be the last middleware
 app.use(errorHandler);
