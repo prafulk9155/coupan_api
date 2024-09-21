@@ -64,6 +64,8 @@ exports.addCategory = async (req, res) => {
   }
 };
 
+
+
 // Get all products
 exports.getProducts = async (req, res) => {
   try {

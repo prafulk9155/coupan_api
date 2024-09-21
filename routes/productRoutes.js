@@ -3,7 +3,7 @@ const { createProduct, getProducts,addCategory } = require('../controllers/produ
 const router = express.Router();
 
 // Create a new product
-router.post('/add-product', createProduct); // POST request to create a product
+router.post('/add-product', createProduct);
 router.post('/add-category', addCategory);
 
 
