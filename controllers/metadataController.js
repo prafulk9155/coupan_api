@@ -27,14 +27,27 @@ exports.addMetadata = async (req, res) => {
 
 // Get all Metadata
 exports.getAllMetadata = async (req, res) => {
+    const { start , count } = req.body.data; // Get page and limit from query parameters
+
     try {
-        const metadataList = await Metadata.find({ is_active: true });
-        res.status(200).json({ error: false, data: metadataList });
+        const totalCount = await Metadata.countDocuments({ is_active: true }); // Get total count of active metadata
+        const metadataList = await Metadata.find({ is_active: true })
+            .skip((start ) * count) // Skip the number of documents based on the current page
+            .limit(Number(count)); // Limit the number of documents returned
+
+        res.status(200).json({
+            error: false,
+            data: metadataList,
+            total_count: totalCount,
+            current_page: start,
+            total_pages: Math.ceil(totalCount / count) // Calculate total pages
+        });
     } catch (error) {
         console.error("Error while fetching metadata list:", error);
         res.status(500).json({ error: true, message: error.message });
     }
 };
+
 
 exports.updateMetadata = async (req, res) => {
 // Update Metadata (this will mark it as inactive)exports.updateMetadata = async (req, res) => {

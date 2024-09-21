@@ -24,7 +24,7 @@ connectDB();
 
 // Define Routes
 app.use('/api/users', userRoutes);
-app.use('/api/coupons', authenticate, couponRoutes); // Apply authentication to coupon routes
+app.use('/api/coupons',  couponRoutes); // Apply authentication to coupon routes
 app.use('/api/products', productRoutes);
 app.use('/api/metadata', metadataRoutes);
 

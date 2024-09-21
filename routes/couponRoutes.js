@@ -1,27 +1,19 @@
 const express = require('express');
-const {
-    createCoupon,
-    getCoupons,
-    applyCoupon,
-    favoriteCoupon, // Assuming you have an action to save a favorite
-    deleteCoupon
-} = require('../controllers/couponController');
-const { authenticate } = require('../middlewares/authMiddleware'); // Authentication middleware
 const router = express.Router();
+const couponController = require('../controllers/couponController');
 
-// Create a new coupon (requires admin access)
-router.post('/', authenticate, createCoupon); // Create coupon
+// Add Metadata
+router.post('/add', couponController.createCoupon);
 
-// Get all coupons
-router.get('/', getCoupons); // Retrieve all coupons
+// Get all active Metadata
+router.post('/get', couponController.getCoupons);
 
-// Apply a coupon (does NOT require token)
-router.post('/apply', applyCoupon); // Apply a coupon
+// Get Metadata by ID
+router.get('/getDataById', couponController.getCouponById);
 
-// Favorite a coupon (requires token)
-router.post('/favorite', authenticate, favoriteCoupon); // Save coupon as favorite
+// Update Metadata to inactive
+router.put('/update', couponController.updateCoupon);
+router.put('/delete', couponController.deleteCoupon);
 
-// Delete a coupon by ID (requires admin access)
-router.delete('/:id', authenticate, deleteCoupon); // Delete coupon
-
+// Export the router
 module.exports = router;

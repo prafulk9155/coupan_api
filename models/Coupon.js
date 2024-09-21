@@ -1,15 +1,48 @@
+// models/Coupon.js
 const mongoose = require('mongoose');
 
 const couponSchema = new mongoose.Schema({
-    code: { type: String, required: true, unique: true }, // Coupon code
-    discount: { type: Number, required: true },
-    type:{  type: String, required: true } ,// Discount percentage or amount
-    isActive: { type: Boolean, default: true }, // Status of the coupon
-    createdByAdmin: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Reference to the user who created it
-    added_on: { type: Date, default: Date.now },// Timestamp of when the category was added
-    added_by: { type: String, default: "0" }, 
-    updated_on: { type: Date,default:null }, 
-    updated_by :{ type: String, default: "0" } 
+    title: { 
+        type: String, 
+        required: true, // Title of the coupon
+    },
+    value: { 
+        type: String, 
+        required: true,
+        unique:true 
+    },
+    type: { 
+        type: String, 
+        required: true // Type (e.g., percentage or amount)
+    },
+    discount_min: { 
+        type: Number, 
+        required: true // Minimum discount value
+    },
+    discount_max: { 
+        type: Number, 
+        required: true // Maximum discount value
+    },
+    is_active: { 
+        type: Boolean, 
+        default: true // Status of the coupon
+    },
+    added_on: { 
+        type: Date, 
+        default: Date.now // Timestamp when the coupon was added 
+    },
+    added_by: { 
+        type: String, 
+        default: "0" // Added by user (default to "0")
+    },
+    updated_on: { 
+        type: Date, 
+        default: null // Last updated timestamp
+    },
+    updated_by: { 
+        type: String, 
+        default: "0" // Updated by user (default to "0")
+    }
 });
 
 module.exports = mongoose.model('Coupon', couponSchema);

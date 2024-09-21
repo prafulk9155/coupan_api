@@ -2,91 +2,103 @@ const Coupon = require('../models/Coupon');
 
 // Create a new coupon
 exports.createCoupon = async (req, res) => {
-    const { code, discount } = req.body;
+    console.log(req.body.data)
+    const { title,value, type, discount_min, discount_max } = req.body.data;
+
+    if (!title ||!value || !type  || discount_min === undefined || discount_max === undefined) {
+        return res.status(400).json({ error: true, message: "Title, type, discount_min, and discount_max are required." });
+    }
 
     try {
         const newCoupon = new Coupon({ 
-            code, 
-            discount, 
-            createdByAdmin: req.user.id // Assume user is authenticated using middleware
+            title, 
+            type, 
+            discount_min, 
+            discount_max, 
+            value,
+            added_by: req.user?.id || "0" // Assume user is authenticated using middleware
         });
         await newCoupon.save();
-        res.status(201).json(newCoupon);
+        res.status(201).json({ error: false, message: "Coupon added successfully", data: newCoupon });
     } catch (error) {
-        res.status(500).json({ error: 'Error while creating coupon' });
+        console.error("Error while creating coupon:", error);
+        res.status(500).json({ error: true, message: error.message });
     }
 };
 
-// Get all coupons
+// Get all active coupons
 exports.getCoupons = async (req, res) => {
     try {
-        const coupons = await Coupon.find();
-        res.status(200).json(coupons);
+        const coupons = await Coupon.find({ is_active: true });
+        res.status(200).json({ error: false, data: coupons });
     } catch (error) {
-        res.status(500).json({ error: 'Error while fetching coupons' });
+        console.error("Error while fetching coupons:", error);
+        res.status(500).json({ error: true, message: error.message });
     }
 };
 
-// Apply a coupon
-exports.applyCoupon = async (req, res) => {
-    const { code } = req.body;
+// Get Coupon by ID
+exports.getCouponById = async (req, res) => {
+    const { id } = req.body.data;
 
     try {
-        const coupon = await Coupon.findOne({ code });
-        if (!coupon || !coupon.isActive) {
-            return res.status(400).json({ error: 'Invalid or inactive coupon' });
-        }
-        res.status(200).json({ message: 'Coupon applied successfully', discount: coupon.discount });
-    } catch (error) {
-        res.status(500).json({ error: 'Error while applying coupon' });
-    }
-};
-
-// Delete a coupon by ID
-exports.deleteCoupon = async (req, res) => {
-    const { id } = req.params;
-
-    try {
-        await Coupon.findByIdAndDelete(id);
-        res.status(204).send();
-    } catch (error) {
-        res.status(500).json({ error: 'Error while deleting coupon' });
-    }
-};
-
-// Make sure to import User model
-
-// Your existing functions go here (createCoupon, getCoupons, applyCoupon, etc.)
-
-// Favorite a coupon for a user
-exports.favoriteCoupon = async (req, res) => {
-    const { couponId } = req.body; // The ID of the coupon to favorite
-
-    try {
-        // Check if the coupon exists
-        const coupon = await Coupon.findById(couponId);
+        const coupon = await Coupon.findById(id);
         if (!coupon) {
-            return res.status(404).json({ error: 'Coupon not found' });
+            return res.status(404).json({ error: true, message: "Coupon not found." });
         }
-
-        // Update user to add the coupon ID to their favorites
-        const user = await User.findById(req.user.id); // req.user comes from authentication middleware
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        // Add to favorites array if not already present
-        if (!user.favorites.includes(couponId)) {
-            user.favorites.push(couponId);
-            await user.save(); // Save updated user
-        }
-
-        res.status(200).json({ message: 'Coupon favorited successfully', favorites: user.favorites });
+        res.status(200).json({ error: false, data: coupon });
     } catch (error) {
-        res.status(500).json({ error: 'Error while favoriting coupon' });
+        console.error("Error while fetching coupon:", error);
+        res.status(500).json({ error: true, message: error.message });
     }
 };
 
+// Update coupon details
+exports.updateCoupon = async (req, res) => {
+    const { id } = req.body.data; 
+    const updateData = req.body.data; // Get the entire data to be updated
 
-// const Coupon = require('../models/Coupon');
-const User = require('../models/User'); 
+    try {
+        delete updateData.id; // Remove id from updateData
+
+        updateData.updated_on = Date.now();
+        updateData.updated_by = updateData.updated_by || "0"; // Default if not provided
+
+        const updatedCoupon = await Coupon.findByIdAndUpdate(
+            id,
+            { $set: updateData },
+            { new: true } // Return the updated document
+        );
+
+        if (!updatedCoupon) {
+            return res.status(404).json({ error: true, message: "Coupon not found." });
+        }
+
+        res.status(200).json({ error: false, message: "Coupon updated successfully", data: updatedCoupon });
+    } catch (error) {
+        console.error("Error while updating coupon:", error);
+        res.status(500).json({ error: true, message: error.message });
+    }
+};
+
+// Delete (deactivate) a coupon 
+exports.deleteCoupon = async (req, res) => {
+    const { id } = req.body.data; // Get coupon ID from request body
+
+    try {
+        const updatedCoupon = await Coupon.findByIdAndUpdate(
+            id,
+            { is_active: false, updated_on: Date.now(), updated_by: req.user?.id || "0" },
+            { new: true } // Return the updated document
+        );
+
+        if (!updatedCoupon) {
+            return res.status(404).json({ error: true, message: "Coupon not found." });
+        }
+
+        res.status(200).json({ error: false, message: "Coupon deleted successfully" });
+    } catch (error) {
+        console.error("Error while deleting coupon:", error);
+        res.status(500).json({ error: true, message: error.message });
+    }
+};
