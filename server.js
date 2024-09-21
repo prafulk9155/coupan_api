@@ -46,8 +46,13 @@ app.get('/tnc', (req, res) => {
   res.status(200).json({ error: false, message: "Coupon API Running successfully...", terms: termsAndConditions });
 });
 
+app.get('/api/hello', (req, res) => {
+  res.json({ message: 'Hello from Vercel' });
+});
+
+
 // API Confirmation Route
-app.use('/api', (req, res) => {
+app.get('/api', (req, res) => {
   res.status(200).json({ error: false, message: "Coupon Api Running successfully..." });
 });
 
