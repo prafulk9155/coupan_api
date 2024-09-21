@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const metadataController = require('../controllers/metadataController');
+const metadataMiddleware = require('../middlewares/metadataMiddleware'); // Import the middleware
+
+// Use the logging middleware for all routes
+router.use(metadataMiddleware);
 
 // Add Metadata
 router.post('/add', metadataController.addMetadata);
