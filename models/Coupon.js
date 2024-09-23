@@ -9,23 +9,35 @@ const couponSchema = new mongoose.Schema({
     value: { 
         type: String, 
         required: true,
-        unique:true 
+        unique: true 
     },
     type: { 
         type: String, 
         required: true // Type (e.g., percentage or amount)
     },
-    discount_min: { 
+    original_price: { 
         type: Number, 
-        required: true // Minimum discount value
+        required: true // Original price of the item
     },
-    discount_max: { 
+    current_price: { 
         type: Number, 
-        required: true // Maximum discount value
+        required: true // Current price after discount
     },
-    is_active: { 
-        type: Boolean, 
-        default: true // Status of the coupon
+    discount_percentage: { 
+        type: Number, 
+        required: true // Discount percentage calculated
+    },
+    expiry_date: { 
+        type: Date, 
+        required: true // Date until the coupon is valid
+    },
+    image: { 
+        type: String, 
+        required: true // URL/image path of the coupon image
+    },
+    link: { 
+        type: String, 
+        required: true // URL/image path of the coupon image
     },
     added_on: { 
         type: Date, 
@@ -42,7 +54,15 @@ const couponSchema = new mongoose.Schema({
     updated_by: { 
         type: String, 
         default: "0" // Updated by user (default to "0")
-    }
+    },
+    is_active: { type: Boolean, default: true },
+    multiple_type: { type: Boolean, default: false }, 
+    desc: { 
+        type: String, 
+        default:null
+      
+    },     
+
 });
 
 module.exports = mongoose.model('Coupon', couponSchema);

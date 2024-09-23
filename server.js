@@ -2,6 +2,7 @@
 
 const express = require('express');
 const mongoose = require('mongoose');
+const paser = require('parser')
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db'); // Assuming you have set up a connectDB function to connect to MongoDB
@@ -10,13 +11,17 @@ const couponRoutes = require('./routes/couponRoutes');
 const { errorHandler } = require('./middlewares/errorMiddleware'); // Import error handling middleware
 const productRoutes = require('./routes/productRoutes');
 const metadataRoutes = require('./routes/metadataRoutes');
+const bodyParser = require('body-parser');
+const multer = require('multer');
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-
+app.use(bodyParser.json()); // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({ extended: true })); // to support URL-encoded bodies
 app.use(cors());
+app.use(multer().any())
 
 app.use(express.json());
 

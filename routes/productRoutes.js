@@ -1,13 +1,22 @@
 const express = require('express');
-const { createProduct, getProducts,addCategory } = require('../controllers/productController'); // Import the relevant controller functions
 const router = express.Router();
+const productController = require('../controllers/productController');
+const upload = require('../middlewares/upload'); // Your Multer setup
 
-// Create a new product
-router.post('/add-product', createProduct);
-router.post('/add-category', addCategory);
+// Use the upload middleware for file upload handling
+router.post('/add', upload.single('productImage'), productController.addProduct);
 
+// Get all active products
+router.post('/get', productController.getAllProduct);
 
-// Get all products (or filter based on additional criteria if needed)
-router.get('/', getProducts); // GET request to fetch all products
+// Get product by ID
+router.get('/getDataById', productController.getProductById);
 
-module.exports = router; // Export the router to be used in server.js
+// Update product
+router.put('/update', productController.updateProduct);
+
+// Delete product
+router.put('/delete', productController.deleteProduct);
+
+// Export the router
+module.exports = router;

@@ -1,4 +1,4 @@
-// middleware/couponMiddleware.js
+// middleware/productMiddleware.js
 
 const fs = require("fs");
 const path = require("path");
@@ -7,7 +7,7 @@ const path = require("path");
 const logStream = fs.createWriteStream(path.join(__dirname, '../logs/server.log'), { flags: 'a' }); // Append mode
 
 // Logging Middleware for Coupon Router
-const couponMiddleware = (req, res, next) => {
+const productMiddleware = (req, res, next) => {
   const currentTime = new Date().toISOString();
 
   // Log incoming request details
@@ -20,7 +20,7 @@ const couponMiddleware = (req, res, next) => {
   };
   
   // Log to console
-//   console.log(`********** Coupon Router **********`);
+//   console.log(`********** Product Router **********`);
   console.log(`Incoming Request:`, logEntry.method, logEntry.url);
 
   // Capture the original send function
@@ -37,7 +37,7 @@ const couponMiddleware = (req, res, next) => {
     console.log(`Response:`, responseLog.status, responseLog.responseBody);
     
     // Log to file
-    logStream.write(`Incoming Request for coupon: ${JSON.stringify(logEntry)}\nOutgoing Response: ${JSON.stringify(responseLog)}\n\n`);
+    logStream.write(`Incoming Request for product: ${JSON.stringify(logEntry)}\nOutgoing Response: ${JSON.stringify(responseLog)}\n\n`);
     
     return originalSend(body); // Call original send method
   };
@@ -45,4 +45,4 @@ const couponMiddleware = (req, res, next) => {
   next();
 };
 
-module.exports = couponMiddleware;
+module.exports = productMiddleware;

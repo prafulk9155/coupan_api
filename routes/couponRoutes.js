@@ -13,7 +13,7 @@ router.post("/add", couponController.createCoupon);
 router.post("/get", couponController.getCoupons);
 
 // Get Metadata by ID
-router.get("/getDataById", couponController.getCouponById);
+router.post("/getCouponById", couponController.getCouponById);
 
 // Update Metadata to inactive
 router.put("/update", couponController.updateCoupon);
